@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/styles.css">
+  <title>Amazon Affiliate Links</title>
+</head>
+<body>
+  <h1>Amazon Affiliate Links</h1>
+  
+  <form action="/add-link" method="POST">
+    <label for="productName">Product Name:</label>
+    <input type="text" id="productName" name="productName" required><br>
+    <label for="imageUrl">Image URL:</label>
+    <input type="text" id="imageUrl" name="imageUrl" required><br>
+    <label for="linkUrl">Affiliate Link URL:</label>
+    <input type="text" id="linkUrl" name="linkUrl" required><br>
+    <button type="submit">Add Link</button>
+  </form>
+  
+  <h2>Affiliate Links List</h2>
+  <ul>
+    <% links.forEach(link => { %>
+      <li>
+        <strong><%= link.productName %></strong><br>
+        <img src="<%= link.imageUrl %>" alt="<%= link.productName %>"><br>
+        <a href="<%= link.linkUrl %>" target="_blank">Affiliate Link</a>
+      </li>
+    <% }); %>
+  </ul>
+</body>
+</html>
