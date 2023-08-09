@@ -7,27 +7,74 @@
   <title>Amazon Affiliate Links</title>
 </head>
 <body>
-  <h1>Amazon Affiliate Links</h1>
+  <header>
+    <h1>Amazon Affiliate Links</h1>
+  </header>
   
-  <form action="/add-link" method="POST">
-    <label for="productName">Product Name:</label>
-    <input type="text" id="productName" name="productName" required><br>
-    <label for="imageUrl">Image URL:</label>
-    <input type="text" id="imageUrl" name="imageUrl" required><br>
-    <label for="linkUrl">Affiliate Link URL:</label>
-    <input type="text" id="linkUrl" name="linkUrl" required><br>
-    <button type="submit">Add Link</button>
-  </form>
-  
-  <h2>Affiliate Links List</h2>
-  <ul>
+  <div class="container">
+    <form action="/add-link" method="POST">
+      <label for="productName">Product Name:</label>
+      <input type="text" id="productName" name="productName" required><br>
+      <label for="imageUrl">Image URL:</label>
+      <input type="text" id="imageUrl" name="imageUrl" required><br>
+      <label for="linkUrl">Affiliate Link URL:</label>
+      <input type="text" id="linkUrl" name="linkUrl" required><br>
+      <button type="submit">Add Link</button>
+    </form>
+    
+    <h2>Affiliate Links List</h2>
+    <% if (successMessage) { %>
+      <div class="flash-message success"><%= successMessage %></div>
+    <% } %>
     <% links.forEach(link => { %>
-      <li>
-        <strong><%= link.productName %></strong><br>
-        <img src="<%= link.imageUrl %>" alt="<%= link.productName %>"><br>
-        <a href="<%= link.linkUrl %>" target="_blank">Affiliate Link</a>
-      </li>
+      <section class="product-section">
+        <div class="product-details">
+          <strong><%= link.productName %></strong><br>
+          <img src="<%= link.imageUrl %>" alt="<%= link.productName %>"><br>
+          <a href="<%= link.linkUrl %>" target="_blank">Affiliate Link</a>
+          <button class="copy-button" data-link="<%= link.linkUrl %>">Copy Link</button>
+          <button class="delete-button" data-id="<%= link.id %>">Delete</button>
+        </div>
+      </section>
     <% }); %>
-  </ul>
+  </div>
+  
+  <script>
+    const copyButtons = document.querySelectorAll('.copy-button');
+    copyButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const linkToCopy = button.getAttribute('data-link');
+        copyToClipboard(linkToCopy);
+        button.textContent = 'Copied!';
+        setTimeout(() => {
+          button.textContent = 'Copy Link';
+        }, 2000);
+      });
+    });
+
+    const deleteButtons = document.querySelectorAll('.delete-button');
+    deleteButtons.forEach(button => {
+      button.addEventListener('click', async () => {
+        const linkId = button.getAttribute('data-id');
+        if (confirm('Are you sure you want to delete this link?')) {
+          try {
+            await fetch(`/delete-link/${linkId}`, { method: 'DELETE' });
+            location.reload();
+          } catch (error) {
+            console.error('Error deleting link:', error);
+          }
+        }
+      });
+    });
+
+    function copyToClipboard(text) {
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+    }
+  </script>
 </body>
 </html>

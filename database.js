@@ -40,7 +40,20 @@ const getAllLinks = () => {
   });
 };
 
+const deleteLink = (linkId) => {
+  return new Promise((resolve, reject) => {
+    db.run('DELETE FROM links WHERE id = ?', [linkId], (err) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve();
+      }
+    });
+  });
+};
+
 module.exports = {
   addLink,
-  getAllLinks
+  getAllLinks,
+  deleteLink
 };
